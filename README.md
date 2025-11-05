@@ -445,63 +445,6 @@
       transform: rotate(90deg);
     }
 
-    .add-image-section {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      background: rgba(255,255,255,0.9);
-      padding: 15px 25px;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .or-divider {
-      color: #666;
-      font-size: 14px;
-      font-style: italic;
-    }
-
-    .url-input {
-      padding: 10px 15px;
-      border: 2px solid #d4c5a9;
-      border-radius: 4px;
-      font-size: 14px;
-      width: 300px;
-      font-family: 'Georgia', serif;
-    }
-
-    .url-input:focus {
-      outline: none;
-      border-color: #c41e3a;
-    }
-
-    .add-button {
-      padding: 10px 20px;
-      background: #c41e3a;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      font-family: 'Georgia', serif;
-      transition: all 0.3s ease;
-    }
-
-    .add-button:hover {
-      background: #8b1428;
-    }
-
-    .add-button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-
     .empty-state {
       display: flex;
       flex-direction: column;
@@ -623,6 +566,45 @@
     .toast.success {
       background: #28a745;
     }
+
+    .add-image-section {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      background: rgba(255,255,255,0.9);
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+
+
+    .add-button {
+      padding: 10px 20px;
+      background: #c41e3a;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: 'Georgia', serif;
+      transition: all 0.3s ease;
+    }
+
+    .add-button:hover {
+      background: #8b1428;
+    }
+
+    .add-button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
@@ -685,7 +667,7 @@
        Chưa có ảnh nào
       </div>
       <div style="font-size: 14px; color: #999;">
-       Thêm ảnh bằng cách nhập link ở dưới
+       Thiệp này chưa có ảnh kỷ niệm
       </div>
      </div>
     </div>
@@ -723,6 +705,7 @@
     const fileInput = document.getElementById('fileInput');
     const toast = document.getElementById('toast');
     const pagesContainer = document.getElementById('pagesContainer');
+
 
     // Data handler for SDK
     const dataHandler = {
@@ -791,6 +774,8 @@
       console.log('File input changed:', event.target.files);
       handleFileSelect(event);
     });
+
+
 
     async function handleFileSelect(event) {
       const files = event.target.files;
@@ -876,56 +861,7 @@
       });
     }
 
-    async function addImageFromUrl() {
-      const url = urlInput.value.trim();
-      
-      if (!url) {
-        showToast('Vui lòng nhập link ảnh', 'error');
-        return;
-      }
 
-      if (!url.startsWith('https://')) {
-        showToast('Link ảnh phải bắt đầu bằng https://', 'error');
-        return;
-      }
-
-      if (images.length >= 999) {
-        showToast('Đã đạt giới hạn tối đa 999 ảnh', 'error');
-        return;
-      }
-
-      setLoading(true);
-
-      const imageData = {
-        id: Date.now().toString(),
-        url: url,
-        name: `Ảnh ${images.length + 1}`,
-        createdAt: new Date().toISOString()
-      };
-
-      if (window.dataSdk) {
-        const result = await window.dataSdk.create(imageData);
-        if (result.isOk) {
-          urlInput.value = '';
-          showToast('Đã thêm ảnh thành công!', 'success');
-        } else {
-          console.error('SDK Error:', result.error);
-          // Fallback: add to local array
-          images.push(imageData);
-          urlInput.value = '';
-          showToast('Đã thêm ảnh thành công!', 'success');
-          updateGalleryDisplay();
-        }
-      } else {
-        // Fallback if SDK not available
-        images.push(imageData);
-        urlInput.value = '';
-        showToast('Đã thêm ảnh thành công!', 'success');
-        updateGalleryDisplay();
-      }
-
-      setLoading(false);
-    }
 
     let imageToDelete = null;
 
@@ -1033,16 +969,6 @@
       }
     }
 
-    function goToPage(pageNumber) {
-      if (pageNumber >= 1 && pageNumber <= images.length) {
-        currentImage = pageNumber;
-        updateImageDisplay();
-        updateCounter();
-        updateNavigationButtons();
-        updatePageDots();
-      }
-    }
-
     function updateImageDisplay() {
       if (images.length === 0) {
         showEmptyState();
@@ -1115,7 +1041,6 @@
 
     function setLoading(loading) {
       isLoading = loading;
-      fileInput.disabled = loading;
       
       if (loading) {
         gallery.classList.add('loading');
@@ -1215,5 +1140,5 @@
       });
     }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9995e7ea42fda906',t:'MTc2MjI3ODEyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9999a79894b16bb2',t:'MTc2MjMxNzQzNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
